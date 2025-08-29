@@ -1,0 +1,32 @@
+Gere um código Java completo para um sistema de streaming de música simplificado, seguindo os requisitos abaixo. O código deve ser bem estruturado, utilizar Programação Orientada a Objetos (POO) com encapsulamento, herança e polimorfismo, e incluir tratamento de exceções. Utilize estruturas de dados adequadas (List, Set, Map).
+
+Requisitos:
+
+1.  **Usuário:**
+    *   Pode se cadastrar com nome e e-mail.
+    *   Pode criar e gerenciar suas playlists.
+    *   Pode adicionar e remover mídias de suas playlists.
+    *   Pode visualizar suas playlists e as músicas contidas.
+
+2.  **Mídias:**
+    *   Possui título, artista, duração (em segundos) e gênero.
+    *   Deve ser armazenada em um catálogo geral de músicas disponíveis.
+    *   Mídias podem ser `Musica`, `Podcast` ou `Audiobook` (usar herança).
+
+3.  **Playlist:**
+    *   Possui um nome e pertence a um único usuário.
+    *   Contém uma lista de mídias.
+    *   Pode calcular a duração total da playlist.
+
+4.  **Gêneros musicais:**
+    *   Criar uma enumeração `Genero` com valores como: `ROCK`, `POP`, `MPB`, `JAZZ`, `CLASSICA`, etc.
+
+5.  **Catálogo:**
+    *   Armazena todas as mídias cadastradas.
+    *   Permite buscar mídias por título, artista ou gênero.
+
+6.  **Tratamento de Exceções:**
+    *   Implementar exceções personalizadas para cenários como mídia não encontrada, playlist não encontrada, mídia já existente, playlist já existente.
+
+Forneça o código completo, incluindo as classes, exceções e uma classe `Main` para demonstração.
+

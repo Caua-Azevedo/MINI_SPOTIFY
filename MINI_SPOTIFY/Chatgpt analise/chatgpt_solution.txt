@@ -1,0 +1,349 @@
+```java
+// Placeholder para o código Java gerado pelo ChatGPT
+// Em um cenário real, eu interagiria com a API do ChatGPT aqui para obter o código.
+// O código gerado seria então salvo neste arquivo para análise posterior.
+
+// Exemplo de estrutura de classes que o ChatGPT poderia gerar:
+
+package com.minispotifychatgpt;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
+// Exceções Personalizadas
+class MidiaNaoEncontradaException extends Exception {
+    public MidiaNaoEncontradaException(String message) { super(message); }
+}
+
+class PlaylistNaoEncontradaException extends Exception {
+    public PlaylistNaoEncontradaException(String message) { super(message); }
+}
+
+class MidiaJaExisteException extends Exception {
+    public MidiaJaExisteException(String message) { super(message); }
+}
+
+class PlaylistJaExisteException extends Exception {
+    public PlaylistJaExisteException(String message) { super(message); }
+}
+
+// Enumeração Genero
+enum Genero {
+    ROCK, POP, MPB, JAZZ, CLASSICA, ELETRONICA, SERTANEJO, FUNK, HIPHOP, REGGAE, BLUES, METAL, INDIE, GOSPEL, OUTRO
+}
+
+// Classe Abstrata Midia
+abstract class Midia {
+    private String titulo;
+    private String artista;
+    private int duracao;
+    private Genero genero;
+
+    public Midia(String titulo, String artista, int duracao, Genero genero) {
+        this.titulo = titulo;
+        this.artista = artista;
+        this.duracao = duracao;
+        this.genero = genero;
+    }
+
+    public String getTitulo() { return titulo; }
+    public String getArtista() { return artista; }
+    public int getDuracao() { return duracao; }
+    public Genero getGenero() { return genero; }
+
+    public abstract void tocar();
+
+    @Override
+    public String toString() {
+        return "Título: '" + titulo + "', Artista: '" + artista + "', Duração: " + duracao + "s, Gênero: " + genero;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Midia midia = (Midia) o;
+        return duracao == midia.duracao &&
+               titulo.equals(midia.titulo) &&
+               artista.equals(midia.artista) &&
+               genero == midia.genero;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(titulo, artista, duracao, genero);
+    }
+}
+
+// Classes Concretas de Mídia
+class Musica extends Midia {
+    public Musica(String titulo, String artista, int duracao, Genero genero) {
+        super(titulo, artista, duracao, genero);
+    }
+
+    @Override
+    public void tocar() {
+        System.out.println("Tocando música: " + getTitulo() + " de " + getArtista());
+    }
+}
+
+class Podcast extends Midia {
+    private String episodio;
+    private String apresentador;
+
+    public Podcast(String titulo, String artista, int duracao, Genero genero, String episodio, String apresentador) {
+        super(titulo, artista, duracao, genero);
+        this.episodio = episodio;
+        this.apresentador = apresentador;
+    }
+
+    public String getEpisodio() { return episodio; }
+    public String getApresentador() { return apresentador; }
+
+    @Override
+    public void tocar() {
+        System.out.println("Tocando podcast: \"" + getTitulo() + "\" - Episódio: " + episodio + " com " + apresentador);
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + ", Episódio: '" + episodio + "', Apresentador: '" + apresentador + "'";
+    }
+}
+
+class Audiobook extends Midia {
+    private String narrador;
+    private int capitulo;
+
+    public Audiobook(String titulo, String artista, int duracao, Genero genero, String narrador, int capitulo) {
+        super(titulo, artista, duracao, genero);
+        this.narrador = narrador;
+        this.capitulo = capitulo;
+    }
+
+    public String getNarrador() { return narrador; }
+    public int getCapitulo() { return capitulo; }
+
+    @Override
+    public void tocar() {
+        System.out.println("Tocando audiobook: \"" + getTitulo() + "\" - Capítulo " + capitulo + " narrado por " + narrador);
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + ", Narrador: '" + narrador + "', Capítulo: " + capitulo;
+    }
+}
+
+// Classe Playlist
+class Playlist {
+    private String nome;
+    private List<Midia> midias;
+    private Usuario usuarioDono;
+
+    public Playlist(String nome, Usuario usuarioDono) {
+        this.nome = nome;
+        this.midias = new ArrayList<>();
+        this.usuarioDono = usuarioDono;
+    }
+
+    public String getNome() { return nome; }
+    public List<Midia> getMidias() { return new ArrayList<>(midias); }
+    public Usuario getUsuarioDono() { return usuarioDono; }
+
+    public void adicionarMidia(Midia midia) {
+        this.midias.add(midia);
+        System.out.println("Mídia '" + midia.getTitulo() + "' adicionada à playlist '" + this.nome + "'.");
+    }
+
+    public void removerMidia(Midia midia) throws MidiaNaoEncontradaException {
+        if (!this.midias.remove(midia)) {
+            throw new MidiaNaoEncontradaException("Mídia '" + midia.getTitulo() + "' não encontrada na playlist '" + this.nome + "'.");
+        }
+        System.out.println("Mídia '" + midia.getTitulo() + "' removida da playlist '" + this.nome + "'.");
+    }
+
+    public int calcularDuracaoTotal() {
+        return midias.stream().mapToInt(Midia::getDuracao).sum();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("  - ").append(nome).append(" (Duração Total: ").append(calcularDuracaoTotal()).append("s)\n");
+        if (midias.isEmpty()) {
+            sb.append("    (Playlist vazia)\n");
+        } else {
+            for (Midia midia : midias) {
+                sb.append("    -> ").append(midia.toString()).append("\n");
+            }
+        }
+        return sb.toString();
+    }
+}
+
+// Classe Usuario
+class Usuario {
+    private String nome;
+    private String email;
+    private Map<String, Playlist> playlists;
+
+    public Usuario(String nome, String email) {
+        this.nome = nome;
+        this.email = email;
+        this.playlists = new HashMap<>();
+    }
+
+    public String getNome() { return nome; }
+    public String getEmail() { return email; }
+
+    public void criarPlaylist(String nomePlaylist) throws PlaylistJaExisteException {
+        if (playlists.containsKey(nomePlaylist)) {
+            throw new PlaylistJaExisteException("Playlist com o nome '" + nomePlaylist + "' já existe para o usuário '" + nome + "'.");
+        }
+        playlists.put(nomePlaylist, new Playlist(nomePlaylist, this));
+        System.out.println("Playlist '" + nomePlaylist + "' criada com sucesso para o usuário '" + nome + "'.");
+    }
+
+    public void adicionarMidiaNaPlaylist(String nomePlaylist, Midia midia) throws PlaylistNaoEncontradaException {
+        Playlist playlist = playlists.get(nomePlaylist);
+        if (playlist == null) {
+            throw new PlaylistNaoEncontradaException("Playlist '" + nomePlaylist + "' não encontrada para o usuário '" + nome + "'.");
+        }
+        playlist.adicionarMidia(midia);
+    }
+
+    public void removerMidiaDaPlaylist(String nomePlaylist, Midia midia) throws PlaylistNaoEncontradaException, MidiaNaoEncontradaException {
+        Playlist playlist = playlists.get(nomePlaylist);
+        if (playlist == null) {
+            throw new PlaylistNaoEncontradaException("Playlist '" + nomePlaylist + "' não encontrada para o usuário '" + nome + "'.");
+        }
+        playlist.removerMidia(midia);
+    }
+
+    public Playlist getPlaylist(String nomePlaylist) {
+        return playlists.get(nomePlaylist);
+    }
+
+    public void visualizarPlaylists() {
+        System.out.println("\n--- Playlists de " + nome + " ---");
+        if (playlists.isEmpty()) {
+            System.out.println("O usuário " + nome + " não possui playlists.");
+            return;
+        }
+        for (Playlist playlist : playlists.values()) {
+            System.out.print(playlist.toString());
+        }
+    }
+}
+
+// Classe Catalogo
+class Catalogo {
+    private Set<Midia> midiasDisponiveis;
+
+    public Catalogo() {
+        this.midiasDisponiveis = new HashSet<>();
+    }
+
+    public void adicionarMidia(Midia midia) throws MidiaJaExisteException {
+        if (!midiasDisponiveis.add(midia)) {
+            throw new MidiaJaExisteException("Mídia \"" + midia.getTitulo() + "\" já existe no catálogo.");
+        }
+        System.out.println("Mídia \"" + midia.getTitulo() + "\" adicionada ao catálogo.");
+    }
+
+    public Midia buscarPorTitulo(String titulo) {
+        return midiasDisponiveis.stream()
+                .filter(m -> m.getTitulo().equalsIgnoreCase(titulo))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public List<Midia> buscarPorArtista(String artista) {
+        return midiasDisponiveis.stream()
+                .filter(m -> m.getArtista().equalsIgnoreCase(artista))
+                .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+    }
+
+    public List<Midia> buscarPorGenero(Genero genero) {
+        return midiasDisponiveis.stream()
+                .filter(m -> m.getGenero().equals(genero))
+                .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+    }
+
+    public void listarTodasMidias() {
+        System.out.println("\n--- Mídias Disponíveis no Catálogo ---");
+        if (midiasDisponiveis.isEmpty()) {
+            System.out.println("O catálogo está vazio.");
+            return;
+        }
+        midiasDisponiveis.forEach(System.out::println);
+    }
+}
+
+// Classe Main para Demonstração
+public class MainChatGPT {
+    public static void main(String[] args) {
+        Catalogo catalogo = new Catalogo();
+        Usuario alice = new Usuario("Alice", "alice@example.com");
+        Usuario bob = new Usuario("Bob", "bob@example.com");
+
+        try {
+            Musica m1 = new Musica("Bohemian Rhapsody", "Queen", 354, Genero.ROCK);
+            Musica m2 = new Musica("Hotel California", "Eagles", 390, Genero.ROCK);
+            Podcast p1 = new Podcast("Flow Podcast", "Igor 3K", 7200, Genero.OUTRO, "Episódio 100", "Igor 3K");
+            Audiobook a1 = new Audiobook("Sapiens", "Yuval Noah Harari", 36000, Genero.OUTRO, "Harari", 1);
+
+            catalogo.adicionarMidia(m1);
+            catalogo.adicionarMidia(m2);
+            catalogo.adicionarMidia(p1);
+            catalogo.adicionarMidia(a1);
+
+            // Tentando adicionar mídia duplicada
+            catalogo.adicionarMidia(new Musica("Bohemian Rhapsody", "Queen", 354, Genero.ROCK));
+        } catch (MidiaJaExisteException e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+
+        catalogo.listarTodasMidias();
+
+        try {
+            alice.criarPlaylist("Minhas Favoritas");
+            alice.adicionarMidiaNaPlaylist("Minhas Favoritas", catalogo.buscarPorTitulo("Bohemian Rhapsody"));
+            alice.adicionarMidiaNaPlaylist("Minhas Favoritas", catalogo.buscarPorTitulo("Hotel California"));
+
+            bob.criarPlaylist("Estudos");
+            bob.adicionarMidiaNaPlaylist("Estudos", catalogo.buscarPorTitulo("Flow Podcast"));
+            bob.adicionarMidiaNaPlaylist("Estudos", catalogo.buscarPorTitulo("Sapiens"));
+
+            // Tentando criar playlist duplicada
+            alice.criarPlaylist("Minhas Favoritas");
+        } catch (PlaylistJaExisteException | PlaylistNaoEncontradaException e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+
+        alice.visualizarPlaylists();
+        bob.visualizarPlaylists();
+
+        try {
+            alice.removerMidiaDaPlaylist("Minhas Favoritas", catalogo.buscarPorTitulo("Hotel California"));
+        } catch (PlaylistNaoEncontradaException | MidiaNaoEncontradaException e) {
+            System.out.println("Erro: " + e.getMessage());
+        }
+
+        alice.visualizarPlaylists();
+
+        System.out.println("\nBusca por Artista 'Queen':");
+        catalogo.buscarPorArtista("Queen").forEach(System.out::println);
+
+        System.out.println("\nBusca por Gênero 'ROCK':");
+        catalogo.buscarPorGenero(Genero.ROCK).forEach(System.out::println);
+    }
+}
+```
+
